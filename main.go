@@ -78,14 +78,12 @@ var receipts = []receipt{
 }
 
 func main() {
-	fmt.Println("in main.go main() method")
 	router := gin.Default()
 	router.GET("/receipts", getAllReceipts)
-	router.POST("/receipts", postReceipt)
 	router.GET("/receipts/:id/points", getReceiptById)
-
+	router.POST("/receipts", postReceipt)
+	
 	router.Run("localhost:8080")
-
 }
 
 func getAllReceipts(cntx *gin.Context) {
