@@ -88,3 +88,13 @@ Returns a generated UUID that can be used to find the points for the receipt ass
 ### Response
 
     "109"
+
+
+
+
+    
+
+
+
+
+    
