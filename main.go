@@ -31,52 +31,7 @@ type receipt struct {
 
 var idMap = make(map[string]string)
 
-var items1 = []item{
-	{
-		ShortDescription: "Mountain Dew",
-		Price:            "12.45",
-	},
-	{
-		ShortDescription: "Water",
-		Price:            "3.04",
-	},
-	{
-		ShortDescription: "Coffee",
-		Price:            "10.99",
-	},
-}
-
-var items2 = []item{
-	{
-		ShortDescription: "desc1",
-		Price:            "12.34",
-	},
-	{
-		ShortDescription: "desc2",
-		Price:            "15.09",
-	},
-	{
-		ShortDescription: "desc3",
-		Price:            "8.75",
-	},
-}
-
-var receipts = []receipt{
-	{
-		Retailer:     "Woodman's",
-		PurchaseDate: "2020-02-01",
-		PurchaseTime: "13:01",
-		Items:        items1,
-		Total:        "26.48",
-	},
-	{
-		Retailer:     "Walmart",
-		PurchaseDate: "2022-04-29",
-		PurchaseTime: "8:06",
-		Items:        items2,
-		Total:        "36.18",
-	},
-}
+var receipts = []receipt{}
 
 func main() {
 	router := gin.Default()
