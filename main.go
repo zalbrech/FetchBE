@@ -102,9 +102,9 @@ func postReceipt(cntx *gin.Context) {
 		panic(err)
 	}
 	// calculate points
-	points, err := calculatePoints(&newReceipt)
+	points, err, pointsSlice := calculatePoints(&newReceipt)
 
-	if err != nil {
+	if err != nil || pointsSlice == nil {
 		panic(err)
 	}
 	newReceipt.Points = points
@@ -122,7 +122,7 @@ func postReceipt(cntx *gin.Context) {
 	cntx.IndentedJSON(http.StatusCreated, response)
 }
 
-func calculatePoints(r *receipt) (string, error) {
+func calculatePoints(r *receipt) (string, error, []int) {
 	retailerPoints, suffixPoints, itemsLengthPoints, itemDescriptionPoints, dayPoints, timePoints := 0, 0, 0, 0, 0, 0
 	points := 0
 
@@ -134,7 +134,7 @@ func calculatePoints(r *receipt) (string, error) {
 	retailerPoints += len(strings.ReplaceAll(formattedRetailName, " ", ""))
 
 	if !decRegex.MatchString(r.Total) {
-		return "", throwFormatError(r.Total)
+		return "", throwFormatError(r.Total), nil
 	}
 	suffix := r.Total[len(r.Total)-2:]
 
@@ -152,7 +152,6 @@ func calculatePoints(r *receipt) (string, error) {
 
 	// If the trimmed length of the item description is a multiple of 3, multiply the price by 0.2 and round up to the nearest integer. The result is the number of points earned.
 	for _, item := range r.Items {
-		fmt.Println(item.ShortDescription, item.Price)
 		if (len(strings.Trim(item.ShortDescription, " ")))%3 == 0 {
 			if !decRegex.MatchString(item.Price) {
 				fmt.Println(throwFormatError(item.ShortDescription))
@@ -168,7 +167,7 @@ func calculatePoints(r *receipt) (string, error) {
 	var dateLenErr = len(r.PurchaseDate) != 10
 	var day, dateErr = strconv.Atoi(r.PurchaseDate[9:])
 	if dateErr != nil || dateLenErr == true {
-		return "", throwFormatError(r.PurchaseDate)
+		return "", throwFormatError(r.PurchaseDate), nil
 	}
 
 	if day % 2 != 0 {
@@ -180,19 +179,19 @@ func calculatePoints(r *receipt) (string, error) {
 		var hours, hoursErr = strconv.Atoi(r.PurchaseTime[0:2])
 		var minutes, minutesErr = strconv.Atoi(r.PurchaseTime[3:5])
 		if hoursErr != nil || minutesErr != nil {
-			return "", throwFormatError(r.PurchaseTime)
+			return "", throwFormatError(r.PurchaseTime), nil
 		}
 
 		var time = (hours * 100) + minutes
 
-		fmt.Println(time)
 		if time > 1400 && time < 1600 {
 			timePoints += 10
 		}
 	}
 
 	points = retailerPoints + suffixPoints + itemsLengthPoints + itemDescriptionPoints + dayPoints + timePoints
-	return strconv.Itoa(points), nil
+	pointsSlice := []int{retailerPoints, suffixPoints, itemsLengthPoints, itemDescriptionPoints, dayPoints, timePoints}
+	return strconv.Itoa(points), nil, pointsSlice
 }
 
 func formatString(re *regexp.Regexp, s string) string {

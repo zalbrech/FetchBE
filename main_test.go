@@ -79,9 +79,9 @@ func TestTotalPoints(t *testing.T) {
 	}
 
 	for i, test := range tests {
-		testName := fmt.Sprintf("receipt%d, %d", i+1, test.want)
+		testName := fmt.Sprintf("receipt %d, %d", i+1, test.want)
 		t.Run(testName, func(t *testing.T) {
-			res,_ := calculatePoints(&test.r)
+			res,_,_ := calculatePoints(&test.r)
 			numRes,_ := strconv.Atoi(res)
 			if(numRes != test.want) {
 				t.Errorf("got %d, want %d", numRes, test.want)
@@ -89,7 +89,7 @@ func TestTotalPoints(t *testing.T) {
 		})
 	}
 
-    points,err := calculatePoints(&testReceipt1)
+    points,err,_ := calculatePoints(&testReceipt1)
 	want := 28
 	numPoints,_ := strconv.Atoi(points)
 	if(err != nil || numPoints != want) {
@@ -101,11 +101,21 @@ func TestIndividualPoints(t *testing.T) {
 	var tests = []struct {
 		r receipt
 		i []item
-		retailerWant, suffixWant, itemsLengtWant, itemDescriptionWant, dayWant, timeWant int
+		wants []int
 	}{
-		{testReceipt1, testItems1, 6, 0, 10, 6, 6, 0},
-		{testReceipt2, testItems2, 14, 75, 10, 0, 0, 10},
+		{testReceipt1, testItems1, []int{6, 0, 10, 6, 6, 0}},
+		{testReceipt2, testItems2, []int{14, 75, 10, 0, 0, 10}},
 	}
 
-	for
+	for i, test := range tests {
+		testName := fmt.Sprintf("receipt %d", i+1)
+		t.Run(testName, func(t *testing.T) {
+			_,_, resSlice := calculatePoints(&test.r)
+			for j := range resSlice {
+				if resSlice[j] != test.wants[j] {
+					t.Errorf("got %d, want %d", resSlice[j], test.wants[j])
+				}
+			}
+		})
+	}
 }
