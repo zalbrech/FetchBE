@@ -144,10 +144,8 @@ func calculatePoints(r *receipt) (string, error) {
 	// 25 points if total amount is a multiple of .25
 	switch suffix {
 	case "00":
-		points += 75
 		suffixPoints += 75
 	case ".25", ".50", ".75":
-		points += 50
 		suffixPoints += 50
 	}
 
@@ -169,14 +167,13 @@ func calculatePoints(r *receipt) (string, error) {
 	}
 
 	// 6 points if the day in the purchased date is odd
-
 	var dateLenErr = len(r.PurchaseDate) != 10
 	var day, dateErr = strconv.Atoi(r.PurchaseDate[9:])
 	if dateErr != nil || dateLenErr == true {
 		return "", throwFormatError(r.PurchaseDate)
 	}
 
-	if day%2 != 0 {
+	if day % 2 != 0 {
 		dayPoints += 6
 	}
 
